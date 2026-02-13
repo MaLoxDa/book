@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Моя книга-открытка 💖</title>
+    <title>Странички о любви 💖</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            background: linear-gradient(145deg, #8b4513, #654321);
+            background: linear-gradient(145deg, #f05252, #d48681);
             font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
@@ -24,7 +24,7 @@
 
         h1 {
             color: #ffd700;
-            text-shadow: 2px 2px 0 #4a1e1e;
+            text-shadow: 2px 2px 0 #853737;
             font-size: 36px;
             margin-bottom: 30px;
             text-align: center;
@@ -208,7 +208,7 @@
     </style>
 </head>
 <body>
-    <h1>💖 МОЯ КНИГА-ОТКРЫТКА 💖</h1>
+    <h1>💖 СТРАНИЧКИ О ЛЮБВИ 💖</h1>
 
     <div id="bookContainer" class="book"></div>
     
@@ -231,14 +231,12 @@
     <script>
         // ============== ТВОИ СТРАНИЦЫ ==============
         const pages = [
-            { image: 'cover.jpg', number: 'Обложка' },
-            { image: 'page1.jpg', number: '1' },
-            { image: 'page2.jpg', number: '2' },
-            { image: 'page3.jpg', number: '3' },
-            { image: 'page4.jpg', number: '4' },
-            { image: 'page5.jpg', number: '5' },
-            { image: 'page6.jpg', number: '6' },
-            { image: 'backcover.jpg', number: 'Конец' }
+            { image: 'cover.jpg', number: 'Обложка' },      // индекс 0
+            { image: 'page1.jpg', number: '1' },            // индекс 1
+            { image: 'page2.jpg', number: '2' },            // индекс 2
+            { image: 'page3.jpg', number: '3' },            // индекс 3
+            { image: 'page4.jpg', number: '4' },            // индекс 4
+            { image: 'backcover.jpg', number: 'Конец' }     // индекс 5
         ];
 
         let currentIndex = 0;
