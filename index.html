@@ -1,116 +1,373 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя книга-открытка 💖</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: #8b4513;
+            background: linear-gradient(145deg, #8b4513, #654321);
+            font-family: 'Segoe UI', Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            margin: 0;
             padding: 20px;
         }
-        
-        #flipbook {
-            width: 600px;
-            height: 800px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-radius: 10px;
+
+        h1 {
+            color: #ffd700;
+            text-shadow: 2px 2px 0 #4a1e1e;
+            font-size: 36px;
+            margin-bottom: 30px;
+            text-align: center;
         }
-        
+
+        .book {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
         .page {
+            width: 300px;
+            height: 400px;
             background-size: cover;
             background-position: center;
-            border-radius: 10px;
+            background-repeat: no-repeat;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+            transition: transform 0.3s;
+            cursor: pointer;
+            border: 2px solid #fff;
         }
-        
+
+        .page:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
         .page-number {
             position: absolute;
-            bottom: 20px;
-            right: 30px;
-            background: rgba(255,255,255,0.7);
+            bottom: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
             padding: 5px 15px;
-            border-radius: 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #4a1e1e;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
-        
+
         .navigation {
             margin-top: 40px;
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        
+
         .nav-btn {
             background: #ffd700;
             border: none;
             border-radius: 50px;
-            padding: 15px 30px;
+            padding: 12px 30px;
             font-size: 18px;
+            color: #4a1e1e;
             cursor: pointer;
+            transition: 0.3s;
+            border: 2px solid #fff;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover {
+            background: #ffed4a;
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========== МОДАЛЬНОЕ ОКНО (ФОТО В ПОЛНЫЙ РАЗМЕР) ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .modal-image {
+            max-width: 90%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+            border: 3px solid white;
+            animation: zoomIn 0.3s;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-caption {
+            color: white;
+            font-size: 24px;
+            margin-top: 20px;
+            text-shadow: 2px 2px 0 #000;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: 1px solid white;
+        }
+
+        .close {
+            position: absolute;
+            top: 30px;
+            right: 50px;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            border: 2px solid white;
+        }
+
+        .close:hover {
+            background: white;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        /* Подпись "нажми на страницу" */
+        .hint {
+            color: rgba(255,255,255,0.8);
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            h1 { font-size: 24px; }
+            .page { width: 250px; height: 333px; }
+            .close {
+                top: 20px;
+                right: 20px;
+                font-size: 40px;
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .page { width: 200px; height: 267px; }
         }
     </style>
 </head>
 <body>
-    <div id="flipbook">
-        <!-- Передняя обложка -->
-        <div class="page" style="background-image: url('cover.jpg');">
-            <div class="page-number">Обложка</div>
-        </div>
-        
-        <!-- Страница 1 -->
-        <div class="page" style="background-image: url('page1.jpg');">
-            <div class="page-number">1</div>
-        </div>
-        
-        <!-- Страница 2 -->
-        <div class="page" style="background-image: url('page2.jpg');">
-            <div class="page-number">2</div>
-        </div>
-        
-        <!-- Страница 3 -->
-        <div class="page" style="background-image: url('page3.jpg');">
-            <div class="page-number">3</div>
-        </div>
-        
-        <!-- Страница 4 -->
-        <div class="page" style="background-image: url('page4.jpg');">
-            <div class="page-number">4</div>
-        </div>
-        
-        <!-- Страница 5 -->
-        <div class="page" style="background-image: url('page5.jpg');">
-            <div class="page-number">5</div>
-        </div>
-        
-        <!-- Страница 6 -->
-        <div class="page" style="background-image: url('page6.jpg');">
-            <div class="page-number">6</div>
-        </div>
-        
-        <!-- Задняя обложка -->
-        <div class="page" style="background-image: url('backcover.jpg');">
-            <div class="page-number">Конец</div>
-        </div>
-    </div>
+    <h1>💖 МОЯ КНИГА-ОТКРЫТКА 💖</h1>
+
+    <div id="bookContainer" class="book"></div>
     
+    <div class="hint">💕 нажми на страницу, чтобы рассмотреть поближе 💕</div>
+
     <div class="navigation">
-        <button class="nav-btn" onclick="$('#flipbook').turn('previous')">◀ Назад</button>
-        <button class="nav-btn" onclick="$('#flipbook').turn('next')">Вперёд ▶</button>
+        <button id="prevBtn" class="nav-btn" onclick="prevPage()">◀ Назад</button>
+        <button id="nextBtn" class="nav-btn" onclick="nextPage()">Вперёд ▶</button>
+    </div>
+
+    <!-- ========== МОДАЛЬНОЕ ОКНО (ПРОСМОТР ФОТО) ========== -->
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <div id="modalCaption" class="modal-caption"></div>
+        </div>
     </div>
 
     <script>
-        $("#flipbook").turn({
-            width: 600,
-            height: 800,
-            autoCenter: true,
-            gradients: true,
-            acceleration: true,
-            display: "double",
-            duration: 600
-        });
+        // ============== ТВОИ СТРАНИЦЫ ==============
+        const pages = [
+            { image: 'cover.jpg', number: 'Обложка' },
+            { image: 'page1.jpg', number: '1' },
+            { image: 'page2.jpg', number: '2' },
+            { image: 'page3.jpg', number: '3' },
+            { image: 'page4.jpg', number: '4' },
+            { image: 'page5.jpg', number: '5' },
+            { image: 'page6.jpg', number: '6' },
+            { image: 'backcover.jpg', number: 'Конец' }
+        ];
+
+        let currentIndex = 0;
+
+        // ============== ОТРИСОВКА КНИГИ ==============
+        function renderBook() {
+            const container = document.getElementById('bookContainer');
+            container.innerHTML = '';
+
+            // Обложка (одна)
+            if (currentIndex === 0) {
+                const pageDiv = createPageElement(pages[0]);
+                container.appendChild(pageDiv);
+            }
+            // Задняя обложка (одна)
+            else if (currentIndex === pages.length - 1) {
+                const pageDiv = createPageElement(pages[pages.length - 1]);
+                container.appendChild(pageDiv);
+            }
+            // Разворот (две страницы)
+            else {
+                const pageDiv1 = createPageElement(pages[currentIndex]);
+                container.appendChild(pageDiv1);
+                
+                if (currentIndex + 1 < pages.length - 1) {
+                    const pageDiv2 = createPageElement(pages[currentIndex + 1]);
+                    container.appendChild(pageDiv2);
+                }
+            }
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex >= pages.length - 1;
+        }
+
+        // ============== СОЗДАНИЕ СТРАНИЦЫ ==============
+        function createPageElement(page) {
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'page';
+            
+            pageDiv.style.backgroundImage = `url('${page.image}')`;
+            pageDiv.style.backgroundSize = 'cover';
+            pageDiv.style.backgroundPosition = 'center';
+            
+            // Если нет картинки — розовый фон
+            pageDiv.onerror = function() {
+                this.style.backgroundImage = 'none';
+                this.style.backgroundColor = '#ffb7b7';
+                this.style.background = 'linear-gradient(145deg, #ffb7b7, #ff9e9e)';
+            };
+
+            // ===== КЛИК ПО СТРАНИЦЕ = ОТКРЫТЬ ФОТО =====
+            pageDiv.onclick = function(e) {
+                e.stopPropagation(); // Чтобы не мешало листанию
+                openModal(page.image, page.number);
+            };
+
+            const numberDiv = document.createElement('div');
+            numberDiv.className = 'page-number';
+            numberDiv.textContent = page.number;
+            pageDiv.appendChild(numberDiv);
+
+            return pageDiv;
+        }
+
+        // ============== ОТКРЫТЬ ФОТО ==============
+        function openModal(imageSrc, pageNumber) {
+            const modal = document.getElementById('myModal');
+            const modalImg = document.getElementById('modalImage');
+            const caption = document.getElementById('modalCaption');
+            
+            modal.style.display = 'block';
+            modalImg.src = imageSrc;
+            caption.textContent = `📖 Страница ${pageNumber}`;
+            
+            // Запрещаем скролл страницы
+            document.body.style.overflow = 'hidden';
+        }
+
+        // ============== ЗАКРЫТЬ ФОТО ==============
+        function closeModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Возвращаем скролл
+        }
+
+        // ============== ЛИСТАНИЕ ==============
+        function nextPage() {
+            if (currentIndex === 0) {
+                currentIndex = 1;
+            }
+            else if (currentIndex === pages.length - 2) {
+                currentIndex = pages.length - 1;
+            }
+            else if (currentIndex < pages.length - 1) {
+                currentIndex += 2;
+            }
+            renderBook();
+        }
+
+        function prevPage() {
+            if (currentIndex === 1) {
+                currentIndex = 0;
+            }
+            else if (currentIndex === pages.length - 1) {
+                currentIndex = pages.length - 2;
+            }
+            else if (currentIndex > 1) {
+                currentIndex -= 2;
+            }
+            renderBook();
+        }
+
+        // ============== ЗАКРЫТИЕ ПО ESC ==============
+        window.onkeydown = function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        };
+
+        // ============== ЗАКРЫТИЕ ПО КЛИКУ ВНЕ ФОТО ==============
+        window.onclick = function(event) {
+            const modal = document.getElementById('myModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        // Запуск
+        window.onload = renderBook;
     </script>
 </body>
 </html>
